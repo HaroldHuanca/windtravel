@@ -13,7 +13,7 @@ function Clientes() {
   const [formData, setFormData] = useState({
     usuario_id: '',
     documento_identidad: '',
-    tipo_documento: 'CC',
+    tipo_documento: 'DNI',
     fecha_nacimiento: '',
     direccion: '',
     ciudad: '',
@@ -152,7 +152,7 @@ function Clientes() {
                 </select>
                 <input type="text" name="documento_identidad" placeholder="Documento" value={formData.documento_identidad} onChange={handleChange} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600" required />
                 <select name="tipo_documento" value={formData.tipo_documento} onChange={handleChange} className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
-                  <option value="CC">CC</option>
+                  <option value="DNI">DNI</option>
                   <option value="CE">CE</option>
                   <option value="PA">PA</option>
                 </select>

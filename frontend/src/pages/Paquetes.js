@@ -209,7 +209,7 @@ function Paquetes() {
                   <tr key={paquete.id} className="border-b hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm text-gray-900">{paquete.nombre}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{paquete.destino}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">${paquete.precio_actual}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">S/ {paquete.precio_actual}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{paquete.disponibles}/{paquete.capacidad_maxima}</td>
                     <td className="px-6 py-4 text-sm space-x-2">
                       <button onClick={() => handleEdit(paquete)} className="text-blue-600 hover:text-blue-800"><Edit2 size={18} /></button>

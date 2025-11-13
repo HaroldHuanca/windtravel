@@ -243,7 +243,7 @@ function Reservas() {
                   <option value="">Seleccionar Paquete</option>
                   {paquetes.map((paquete) => (
                     <option key={paquete.id} value={String(paquete.id)}>
-                      {paquete.nombre} - ${paquete.precio_actual} (ID: {paquete.id})
+                      {paquete.nombre} - S/ {paquete.precio_actual} (ID: {paquete.id})
                     </option>
                   ))}
                 </select>
@@ -298,7 +298,7 @@ function Reservas() {
                     <td className="px-6 py-4 text-sm text-gray-900 font-mono">{reserva.numero_reserva}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{reserva.cliente_nombre} {reserva.cliente_apellido}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{reserva.paquete_nombre}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">${reserva.precio_total}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">S/ {reserva.precio_total}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(reserva.estado)}`}>
                         {reserva.estado}

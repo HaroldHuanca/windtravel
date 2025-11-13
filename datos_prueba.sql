@@ -25,11 +25,11 @@ INSERT INTO usuarios (nombre, apellido, email, telefono, activo) VALUES
 -- ============================================================================
 
 INSERT INTO clientes (usuario_id, documento_identidad, tipo_documento, fecha_nacimiento, direccion, ciudad, pais, codigo_postal, preferencias) VALUES
-(1, '1234567890', 'CC', '1990-05-15', 'Calle 10 #20-30', 'Bogotá', 'Colombia', '110111', 'Playas, aventura'),
-(2, '1234567891', 'CC', '1985-08-22', 'Carrera 5 #15-45', 'Medellín', 'Colombia', '050001', 'Montaña, naturaleza'),
-(3, '1234567892', 'CC', '1992-03-10', 'Avenida 9 #10-20', 'Cali', 'Colombia', '760001', 'Cultura, gastronomía'),
-(4, '1234567893', 'CC', '1988-11-30', 'Calle 50 #25-75', 'Barranquilla', 'Colombia', '080001', 'Playas, relax'),
-(5, '1234567894', 'CC', '1995-07-18', 'Carrera 7 #30-40', 'Bogotá', 'Colombia', '110111', 'Aventura, deportes');
+(1, '1234567890', 'DNI', '1990-05-15', 'Calle 10 #20-30', 'Bogotá', 'Colombia', '110111', 'Playas, aventura'),
+(2, '1234567891', 'DNI', '1985-08-22', 'Carrera 5 #15-45', 'Medellín', 'Colombia', '050001', 'Montaña, naturaleza'),
+(3, '1234567892', 'DNI', '1992-03-10', 'Avenida 9 #10-20', 'Cali', 'Colombia', '760001', 'Cultura, gastronomía'),
+(4, '1234567893', 'DNI', '1988-11-30', 'Calle 50 #25-75', 'Barranquilla', 'Colombia', '080001', 'Playas, relax'),
+(5, '1234567894', 'DNI', '1995-07-18', 'Carrera 7 #30-40', 'Bogotá', 'Colombia', '110111', 'Aventura, deportes');
 
 -- ============================================================================
 -- INSERTAR EMPLEADOS
@@ -61,14 +61,14 @@ INSERT INTO proveedores (nombre, tipo_proveedor, contacto_nombre, contacto_email
 -- ============================================================================
 
 INSERT INTO paquetes_turisticos (nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fecha_inicio, fecha_fin, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id, activo) VALUES
-('Cartagena Romántica', 'Disfruta de la magia de Cartagena con visitas a playas paradisíacas y el centro histórico', 'Cartagena', 5, 1500000.00, 1350000.00, 20, 15, '2025-01-15', '2025-01-20', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Playas', 1, TRUE),
-('Aventura en la Sierra Nevada', 'Trekking y camping en la Sierra Nevada, experiencia de naturaleza pura', 'Santa Marta', 7, 2500000.00, 2250000.00, 15, 8, '2025-02-01', '2025-02-08', TRUE, TRUE, TRUE, TRUE, 'Difícil', 'Aventura', 3, TRUE),
-('Café y Cultura Eje Cafetero', 'Recorre las plantaciones de café y conoce la cultura cafetera colombiana', 'Eje Cafetero', 4, 1200000.00, 1100000.00, 25, 20, '2025-01-20', '2025-01-24', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Cultural', 6, TRUE),
-('Tayrona Eco-Adventure', 'Exploración de playas vírgenes y selva tropical en el Parque Tayrona', 'Santa Marta', 3, 900000.00, 800000.00, 30, 22, '2025-02-10', '2025-02-13', TRUE, TRUE, FALSE, TRUE, 'Moderado', 'Naturaleza', 3, TRUE),
-('Bogotá Histórica', 'Tour completo por la capital: museos, monumentos y gastronomía', 'Bogotá', 3, 800000.00, 700000.00, 40, 35, '2025-01-25', '2025-01-28', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Cultural', 6, TRUE),
-('Islas del Rosario Lujo', 'Experiencia premium en las Islas del Rosario con snorkel y playas privadas', 'Cartagena', 4, 2800000.00, 2500000.00, 12, 5, '2025-02-15', '2025-02-19', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Playas', 1, TRUE),
-('Cañón del Chicamocha', 'Aventura en el cañón más profundo de Colombia con deportes extremos', 'Santander', 2, 1100000.00, 950000.00, 20, 18, '2025-02-05', '2025-02-07', TRUE, TRUE, TRUE, TRUE, 'Difícil', 'Aventura', 3, TRUE),
-('Ruta del Magdalena', 'Crucero por el río Magdalena con paradas en pueblos coloniales', 'Huila', 6, 1800000.00, 1600000.00, 50, 40, '2025-03-01', '2025-03-07', TRUE, TRUE, TRUE, FALSE, 'Fácil', 'Naturaleza', 2, TRUE);
+('Machu Picchu Clásico', 'Visita guiada a la ciudadela inca de Machu Picchu con tren y bus incluido', 'Cusco - Machu Picchu', 3, 1500.00, 1350.00, 20, 15, '2025-01-15', '2025-01-17', TRUE, TRUE, TRUE, TRUE, 'Moderado', 'Arqueológico', 1, TRUE),
+('Valle Sagrado y Pisac', 'Recorrido por Pisac, Ollantaytambo y mercados artesanales del Valle Sagrado', 'Cusco - Valle Sagrado', 2, 800.00, 720.00, 25, 20, '2025-01-20', '2025-01-21', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Cultural', 6, TRUE),
+('Sacsayhuamán y Q’enqo', 'Tour por fortalezas y templos incas en los alrededores de Cusco', 'Cusco - Sacsayhuamán', 1, 300.00, 270.00, 30, 22, '2025-02-10', '2025-02-10', TRUE, TRUE, FALSE, TRUE, 'Fácil', 'Arqueológico', 3, TRUE),
+('Moray y Maras', 'Explora las terrazas circulares de Moray y las salineras de Maras', 'Cusco - Moray y Maras', 1, 350.00, 315.00, 40, 35, '2025-01-25', '2025-01-25', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Cultural', 6, TRUE),
+('Choquequirao Trek', 'Caminata de varios días hacia la ciudadela de Choquequirao', 'Cusco - Choquequirao', 4, 1200.00, 1080.00, 12, 5, '2025-02-15', '2025-02-18', TRUE, TRUE, TRUE, TRUE, 'Difícil', 'Aventura', 1, TRUE),
+('Ollantaytambo Profundo', 'Explora las ruinas de Ollantaytambo y su historia', 'Cusco - Ollantaytambo', 1, 280.00, 250.00, 20, 18, '2025-02-05', '2025-02-05', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Arqueológico', 3, TRUE),
+('Tipón Hidráulico', 'Conoce los sistemas hidráulicos incas en Tipón', 'Cusco - Tipón', 1, 220.00, 190.00, 15, 12, '2025-02-01', '2025-02-01', TRUE, TRUE, TRUE, TRUE, 'Fácil', 'Arqueológico', 2, TRUE),
+('Qorikancha y Centro Histórico', 'Visita al Templo del Sol y principales atractivos del centro de Cusco', 'Cusco - Centro Histórico', 1, 180.00, 160.00, 50, 40, '2025-03-01', '2025-03-01', TRUE, TRUE, TRUE, FALSE, 'Fácil', 'Cultural', 2, TRUE);
 
 -- ============================================================================
 -- INSERTAR RESERVAS
