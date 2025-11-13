@@ -46,9 +46,15 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos faltantes' });
     }
 
+    const normalizeDate = require('../utils/normalizeDate');
+    const fechaNacNorm = fecha_nacimiento ? normalizeDate(fecha_nacimiento) : null;
+    if (fecha_nacimiento && !fechaNacNorm) {
+      return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
+    }
+
     const result = await pool.query(
       'INSERT INTO clientes (usuario_id, documento_identidad, tipo_documento, fecha_nacimiento, direccion, ciudad, pais, codigo_postal, preferencias) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
-      [usuario_id, documento_identidad, tipo_documento, fecha_nacimiento, direccion, ciudad, pais, codigo_postal, preferencias]
+      [usuario_id, documento_identidad, tipo_documento, fechaNacNorm, direccion, ciudad, pais, codigo_postal, preferencias]
     );
 
     res.status(201).json(result.rows[0]);
@@ -67,9 +73,15 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { documento_identidad, tipo_documento, fecha_nacimiento, direccion, ciudad, pais, codigo_postal, preferencias } = req.body;
 
+    const normalizeDate = require('../utils/normalizeDate');
+    const fechaNacNorm = fecha_nacimiento ? normalizeDate(fecha_nacimiento) : null;
+    if (fecha_nacimiento && !fechaNacNorm) {
+      return res.status(400).json({ error: 'Fecha de nacimiento inválida' });
+    }
+
     const result = await pool.query(
       'UPDATE clientes SET documento_identidad = $1, tipo_documento = $2, fecha_nacimiento = $3, direccion = $4, ciudad = $5, pais = $6, codigo_postal = $7, preferencias = $8 WHERE id = $9 RETURNING *',
-      [documento_identidad, tipo_documento, fecha_nacimiento, direccion, ciudad, pais, codigo_postal, preferencias, id]
+      [documento_identidad, tipo_documento, fechaNacNorm, direccion, ciudad, pais, codigo_postal, preferencias, id]
     );
 
     if (result.rows.length === 0) {

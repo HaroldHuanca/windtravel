@@ -34,6 +34,11 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor TravelCRM ejecutándose en puerto ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor TravelCRM ejecutándose en puerto ${PORT}`);
+  });
+}
+
+// Export app for testing (supertest)
+module.exports = app;

@@ -37,6 +37,8 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+const normalizeDate = require('../utils/normalizeDate');
+
 // POST - Crear un nuevo paquete
 router.post('/', authMiddleware, async (req, res) => {
   try {
@@ -46,9 +48,16 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos faltantes' });
     }
 
+    const fechaInicioNorm = normalizeDate(fecha_inicio);
+    const fechaFinNorm = normalizeDate(fecha_fin);
+
+    if (!fechaInicioNorm || !fechaFinNorm) {
+      return res.status(400).json({ error: 'Fechas de paquete inválidas' });
+    }
+
     const result = await pool.query(
       'INSERT INTO paquetes_turisticos (nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fecha_inicio, fecha_fin, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17) RETURNING *',
-      [nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fecha_inicio, fecha_fin, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id]
+      [nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fechaInicioNorm, fechaFinNorm, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id]
     );
 
     res.status(201).json(result.rows[0]);
@@ -64,9 +73,16 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fecha_inicio, fecha_fin, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id, activo } = req.body;
 
+    const fechaInicioNorm = normalizeDate(fecha_inicio);
+    const fechaFinNorm = normalizeDate(fecha_fin);
+
+    if ((fecha_inicio && !fechaInicioNorm) || (fecha_fin && !fechaFinNorm)) {
+      return res.status(400).json({ error: 'Fechas de paquete inválidas' });
+    }
+
     const result = await pool.query(
       'UPDATE paquetes_turisticos SET nombre = $1, descripcion = $2, destino = $3, duracion_dias = $4, precio_base = $5, precio_actual = $6, capacidad_maxima = $7, disponibles = $8, fecha_inicio = $9, fecha_fin = $10, incluye_transporte = $11, incluye_alojamiento = $12, incluye_comidas = $13, incluye_tours = $14, nivel_dificultad = $15, tipo_paquete = $16, proveedor_id = $17, activo = $18 WHERE id = $19 RETURNING *',
-      [nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fecha_inicio, fecha_fin, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id, activo, id]
+      [nombre, descripcion, destino, duracion_dias, precio_base, precio_actual, capacidad_maxima, disponibles, fechaInicioNorm, fechaFinNorm, incluye_transporte, incluye_alojamiento, incluye_comidas, incluye_tours, nivel_dificultad, tipo_paquete, proveedor_id, activo, id]
     );
 
     if (result.rows.length === 0) {

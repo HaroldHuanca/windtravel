@@ -46,9 +46,15 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos faltantes' });
     }
 
+    const normalizeDate = require('../utils/normalizeDate');
+    const fechaContrNorm = normalizeDate(fecha_contratacion);
+    if (!fechaContrNorm) {
+      return res.status(400).json({ error: 'Fecha de contratación inválida' });
+    }
+
     const result = await pool.query(
       'INSERT INTO empleados (usuario_id, numero_empleado, departamento, puesto, salario, fecha_contratacion) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [usuario_id, numero_empleado, departamento, puesto, salario, fecha_contratacion]
+      [usuario_id, numero_empleado, departamento, puesto, salario, fechaContrNorm]
     );
 
     res.status(201).json(result.rows[0]);
@@ -67,9 +73,17 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { numero_empleado, departamento, puesto, salario, fecha_contratacion, fecha_terminacion, activo } = req.body;
 
+    const normalizeDate = require('../utils/normalizeDate');
+    const fechaContrNorm = fecha_contratacion ? normalizeDate(fecha_contratacion) : null;
+    const fechaTermNorm = fecha_terminacion ? normalizeDate(fecha_terminacion) : null;
+
+    if ((fecha_contratacion && !fechaContrNorm) || (fecha_terminacion && !fechaTermNorm)) {
+      return res.status(400).json({ error: 'Fechas inválidas' });
+    }
+
     const result = await pool.query(
       'UPDATE empleados SET numero_empleado = $1, departamento = $2, puesto = $3, salario = $4, fecha_contratacion = $5, fecha_terminacion = $6, activo = $7 WHERE id = $8 RETURNING *',
-      [numero_empleado, departamento, puesto, salario, fecha_contratacion, fecha_terminacion, activo, id]
+      [numero_empleado, departamento, puesto, salario, fechaContrNorm, fechaTermNorm, activo, id]
     );
 
     if (result.rows.length === 0) {
