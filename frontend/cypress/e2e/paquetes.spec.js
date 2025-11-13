@@ -2,53 +2,42 @@ describe('Paquetes - CRUD vía UI (mocked API)', () => {
   const usuario = { id: 1, nombre: 'Juan', apellido: 'García', email: 'juan.garcia@email.com' };
 
   beforeEach(() => {
-    cy.wrap([]).as('paquetesState');
+    let paquetesState = [];
 
-    cy.intercept('POST', '/api/auth/login', (req) => {
+    cy.intercept('POST', '**/api/auth/login', (req) => {
       req.reply({ statusCode: 200, body: { token: 'fake-jwt', usuario } });
     }).as('login');
 
-    cy.intercept('GET', '/api/paquetes', (req) => {
-      cy.get('@paquetesState').then((paquetes) => {
-        req.reply({ statusCode: 200, body: paquetes });
-      });
+    cy.intercept('GET', '**/api/paquetes', (req) => {
+      req.reply({ statusCode: 200, body: paquetesState });
     }).as('getPaquetes');
 
-    cy.intercept('POST', '/api/paquetes', (req) => {
-      cy.get('@paquetesState').then((paquetes) => {
-        const nuevo = Object.assign({ id: Date.now() }, req.body);
-        paquetes.push(nuevo);
-        cy.wrap(paquetes).as('paquetesState');
-        req.reply({ statusCode: 201, body: nuevo });
-      });
+    cy.intercept('POST', '**/api/paquetes', (req) => {
+      const nuevo = Object.assign({ id: Date.now() }, req.body);
+      paquetesState.push(nuevo);
+      req.reply({ statusCode: 201, body: nuevo });
     }).as('createPaquete');
 
     cy.intercept('PUT', /\/api\/paquetes\/\d+/, (req) => {
-      cy.get('@paquetesState').then((paquetes) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = paquetes.findIndex(p => p.id === id);
-        if (idx !== -1) {
-          paquetes[idx] = { ...paquetes[idx], ...req.body };
-          cy.wrap(paquetes).as('paquetesState');
-          req.reply({ statusCode: 200, body: paquetes[idx] });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = paquetesState.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        paquetesState[idx] = { ...paquetesState[idx], ...req.body };
+        req.reply({ statusCode: 200, body: paquetesState[idx] });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('updatePaquete');
 
     cy.intercept('DELETE', /\/api\/paquetes\/\d+/, (req) => {
-      cy.get('@paquetesState').then((paquetes) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = paquetes.findIndex(p => p.id === id);
-        if (idx !== -1) {
-          paquetes.splice(idx, 1);
-          cy.wrap(paquetes).as('paquetesState');
-          req.reply({ statusCode: 200, body: {} });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = paquetesState.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        paquetesState.splice(idx, 1);
+        req.reply({ statusCode: 200, body: {} });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('deletePaquete');
   });
 

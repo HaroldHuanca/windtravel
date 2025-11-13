@@ -2,63 +2,52 @@ describe('Clientes - CRUD vía UI (mocked API)', () => {
   const usuario = { id: 1, nombre: 'Juan', apellido: 'García', email: 'juan.garcia@email.com' };
 
   beforeEach(() => {
-    // estado in-memory para simular API
-    cy.wrap([]).as('clientesState');
+    // estado in-memory para simular API (en cierre síncrono)
+    let clientesState = [];
 
-    cy.intercept('POST', '/api/auth/login', (req) => {
+    cy.intercept('POST', '**/api/auth/login', (req) => {
       req.reply({ statusCode: 200, body: { token: 'fake-jwt', usuario } });
     }).as('login');
 
     // Usuarios para el select
-    cy.intercept('GET', '/api/usuarios', (req) => {
+    cy.intercept('GET', '**/api/usuarios', (req) => {
       req.reply({ statusCode: 200, body: [usuario] });
     }).as('getUsuarios');
 
     // GET clientes - responder con el array mutable
-    cy.intercept('GET', '/api/clientes', (req) => {
-      cy.get('@clientesState').then((clientes) => {
-        req.reply({ statusCode: 200, body: clientes });
-      });
+    cy.intercept('GET', '**/api/clientes', (req) => {
+      req.reply({ statusCode: 200, body: clientesState });
     }).as('getClientes');
 
     // POST clientes - agregar a estado
-    cy.intercept('POST', '/api/clientes', (req) => {
-      cy.get('@clientesState').then((clientes) => {
-        const newCliente = Object.assign({ id: Date.now() }, req.body, { nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email });
-        clientes.push(newCliente);
-        cy.wrap(clientes).as('clientesState');
-        req.reply({ statusCode: 201, body: newCliente });
-      });
+    cy.intercept('POST', '**/api/clientes', (req) => {
+      const newCliente = Object.assign({ id: Date.now() }, req.body, { nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email });
+      clientesState.push(newCliente);
+      req.reply({ statusCode: 201, body: newCliente });
     }).as('createCliente');
 
     // PUT clientes
     cy.intercept('PUT', /\/api\/clientes\/\d+/, (req) => {
-      cy.get('@clientesState').then((clientes) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = clientes.findIndex(c => c.id === id);
-        if (idx !== -1) {
-          clientes[idx] = { ...clientes[idx], ...req.body };
-          cy.wrap(clientes).as('clientesState');
-          req.reply({ statusCode: 200, body: clientes[idx] });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = clientesState.findIndex(c => c.id === id);
+      if (idx !== -1) {
+        clientesState[idx] = { ...clientesState[idx], ...req.body };
+        req.reply({ statusCode: 200, body: clientesState[idx] });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('updateCliente');
 
     // DELETE clientes
     cy.intercept('DELETE', /\/api\/clientes\/\d+/, (req) => {
-      cy.get('@clientesState').then((clientes) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = clientes.findIndex(c => c.id === id);
-        if (idx !== -1) {
-          clientes.splice(idx, 1);
-          cy.wrap(clientes).as('clientesState');
-          req.reply({ statusCode: 200, body: {} });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = clientesState.findIndex(c => c.id === id);
+      if (idx !== -1) {
+        clientesState.splice(idx, 1);
+        req.reply({ statusCode: 200, body: {} });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('deleteCliente');
   });
 

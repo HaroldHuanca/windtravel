@@ -2,53 +2,42 @@ describe('Proveedores - CRUD vía UI (mocked API)', () => {
   const usuario = { id: 1, nombre: 'Juan', apellido: 'García', email: 'juan.garcia@email.com' };
 
   beforeEach(() => {
-    cy.wrap([]).as('proveedoresState');
+    let proveedoresState = [];
 
-    cy.intercept('POST', '/api/auth/login', (req) => {
+    cy.intercept('POST', '**/api/auth/login', (req) => {
       req.reply({ statusCode: 200, body: { token: 'fake-jwt', usuario } });
     }).as('login');
 
-    cy.intercept('GET', '/api/proveedores', (req) => {
-      cy.get('@proveedoresState').then((proveedores) => {
-        req.reply({ statusCode: 200, body: proveedores });
-      });
+    cy.intercept('GET', '**/api/proveedores', (req) => {
+      req.reply({ statusCode: 200, body: proveedoresState });
     }).as('getProveedores');
 
-    cy.intercept('POST', '/api/proveedores', (req) => {
-      cy.get('@proveedoresState').then((proveedores) => {
-        const nuevo = Object.assign({ id: Date.now() }, req.body);
-        proveedores.push(nuevo);
-        cy.wrap(proveedores).as('proveedoresState');
-        req.reply({ statusCode: 201, body: nuevo });
-      });
+    cy.intercept('POST', '**/api/proveedores', (req) => {
+      const nuevo = Object.assign({ id: Date.now() }, req.body);
+      proveedoresState.push(nuevo);
+      req.reply({ statusCode: 201, body: nuevo });
     }).as('createProveedor');
 
     cy.intercept('PUT', /\/api\/proveedores\/\d+/, (req) => {
-      cy.get('@proveedoresState').then((proveedores) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = proveedores.findIndex(p => p.id === id);
-        if (idx !== -1) {
-          proveedores[idx] = { ...proveedores[idx], ...req.body };
-          cy.wrap(proveedores).as('proveedoresState');
-          req.reply({ statusCode: 200, body: proveedores[idx] });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = proveedoresState.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        proveedoresState[idx] = { ...proveedoresState[idx], ...req.body };
+        req.reply({ statusCode: 200, body: proveedoresState[idx] });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('updateProveedor');
 
     cy.intercept('DELETE', /\/api\/proveedores\/\d+/, (req) => {
-      cy.get('@proveedoresState').then((proveedores) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = proveedores.findIndex(p => p.id === id);
-        if (idx !== -1) {
-          proveedores.splice(idx, 1);
-          cy.wrap(proveedores).as('proveedoresState');
-          req.reply({ statusCode: 200, body: {} });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = proveedoresState.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        proveedoresState.splice(idx, 1);
+        req.reply({ statusCode: 200, body: {} });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('deleteProveedor');
   });
 

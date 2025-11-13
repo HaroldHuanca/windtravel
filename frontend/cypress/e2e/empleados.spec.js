@@ -2,57 +2,46 @@ describe('Empleados - CRUD vía UI (mocked API)', () => {
   const usuario = { id: 1, nombre: 'Juan', apellido: 'García', email: 'juan.garcia@email.com' };
 
   beforeEach(() => {
-    cy.wrap([]).as('empleadosState');
+    let empleadosState = [];
 
-    cy.intercept('POST', '/api/auth/login', (req) => {
+    cy.intercept('POST', '**/api/auth/login', (req) => {
       req.reply({ statusCode: 200, body: { token: 'fake-jwt', usuario } });
     }).as('login');
 
-    cy.intercept('GET', '/api/usuarios', (req) => {
+    cy.intercept('GET', '**/api/usuarios', (req) => {
       req.reply({ statusCode: 200, body: [usuario] });
     }).as('getUsuarios');
 
-    cy.intercept('GET', '/api/empleados', (req) => {
-      cy.get('@empleadosState').then((empleados) => {
-        req.reply({ statusCode: 200, body: empleados });
-      });
+    cy.intercept('GET', '**/api/empleados', (req) => {
+      req.reply({ statusCode: 200, body: empleadosState });
     }).as('getEmpleados');
 
-    cy.intercept('POST', '/api/empleados', (req) => {
-      cy.get('@empleadosState').then((empleados) => {
-        const nuevo = Object.assign({ id: Date.now(), nombre: usuario.nombre, apellido: usuario.apellido }, req.body);
-        empleados.push(nuevo);
-        cy.wrap(empleados).as('empleadosState');
-        req.reply({ statusCode: 201, body: nuevo });
-      });
+    cy.intercept('POST', '**/api/empleados', (req) => {
+      const nuevo = Object.assign({ id: Date.now(), nombre: usuario.nombre, apellido: usuario.apellido }, req.body);
+      empleadosState.push(nuevo);
+      req.reply({ statusCode: 201, body: nuevo });
     }).as('createEmpleado');
 
     cy.intercept('PUT', /\/api\/empleados\/\d+/, (req) => {
-      cy.get('@empleadosState').then((empleados) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = empleados.findIndex(e => e.id === id);
-        if (idx !== -1) {
-          empleados[idx] = { ...empleados[idx], ...req.body };
-          cy.wrap(empleados).as('empleadosState');
-          req.reply({ statusCode: 200, body: empleados[idx] });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = empleadosState.findIndex(e => e.id === id);
+      if (idx !== -1) {
+        empleadosState[idx] = { ...empleadosState[idx], ...req.body };
+        req.reply({ statusCode: 200, body: empleadosState[idx] });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('updateEmpleado');
 
     cy.intercept('DELETE', /\/api\/empleados\/\d+/, (req) => {
-      cy.get('@empleadosState').then((empleados) => {
-        const id = parseInt(req.url.split('/').pop(), 10);
-        const idx = empleados.findIndex(e => e.id === id);
-        if (idx !== -1) {
-          empleados.splice(idx, 1);
-          cy.wrap(empleados).as('empleadosState');
-          req.reply({ statusCode: 200, body: {} });
-        } else {
-          req.reply({ statusCode: 404 });
-        }
-      });
+      const id = parseInt(req.url.split('/').pop(), 10);
+      const idx = empleadosState.findIndex(e => e.id === id);
+      if (idx !== -1) {
+        empleadosState.splice(idx, 1);
+        req.reply({ statusCode: 200, body: {} });
+      } else {
+        req.reply({ statusCode: 404 });
+      }
     }).as('deleteEmpleado');
   });
 
